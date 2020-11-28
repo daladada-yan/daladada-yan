@@ -1,28 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>一条闲置已久已久已久的微博-关于前端vue的render</title>
-    <url>/2020/05/18/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>canvas-firewords</title>
-    <url>/2020/11/28/canvas-firewords/</url>
-    <content><![CDATA[<h1 id="canvas实现烟花绽放特效"><a href="#canvas实现烟花绽放特效" class="headerlink" title="canvas实现烟花绽放特效"></a>canvas实现烟花绽放特效</h1><h3 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h3><p><img src="http://image.berlin4h.top/images/2020/11/27/GIF-2020-11-27--17-48-40.gif" alt=""></p>
-<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>项目有个场景需求是要实现点击时，出现烟花绽放的效果，在网上百度了很多关于烟花的效果图，免费的不好看，好看的要钱，对于canvas小白来说只能自己亲自上手。</p>
+    <title>canvas画布实现烟花绽放效果</title>
+    <url>/2020/11/28/canvas%E7%94%BB%E5%B8%83%E5%AE%9E%E7%8E%B0%E7%83%9F%E8%8A%B1%E7%BB%BD%E6%94%BE%E6%95%88%E6%9E%9C/</url>
+    <content><![CDATA[<h3 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h3><p><img src="http://image.berlin4h.top/images/2020/11/27/GIF-2020-11-27--17-48-40.gif" alt=""></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>项目有个场景需求是要实现点击时，出现烟花绽放的效果，在网上百度了很多关于烟花的效果图，免费的不好看，好看的要钱，贫穷的打工人选择自己上手。</p>
 <h3 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h3><h5 id="1、分解"><a href="#1、分解" class="headerlink" title="1、分解"></a>1、分解</h5><p>将所有烟花都分解成一个类似水滴形状的瓣，控制它的大小、坐标和旋转角度，叠加在一起就成了一朵好看的烟花。一个瓣可以看做是两条弯曲的曲线构成，曲线可由三次贝塞尔曲线绘制。</p>
 <h5 id="2、水平绘制"><a href="#2、水平绘制" class="headerlink" title="2、水平绘制"></a>2、水平绘制</h5><p>假设初始坐标值为（x，y），瓣的宽度为w，高度为h，第一个拐角点设在宽度0.9位置（经过我的多次测试，这个位置绘制出的烟花最好看！）。</p>
 <p><img src="http://image.berlin4h.top/images/2020/11/28/20201128112506.png" alt=""></p>
@@ -44,5 +26,11 @@
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> pointR = canvasWidth / <span class="number">2</span>;</span><br><span class="line"><span class="keyword">var</span> cw = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">var</span> aT = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">var</span> cwSpeed = canvasWidth / <span class="number">30</span>;<span class="comment">// 画布大小增长速度</span></span><br><span class="line"><span class="keyword">var</span> aSpeed = <span class="number">45</span> / <span class="number">30</span>;</span><br><span class="line"><span class="keyword">var</span> timer = setInterval(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(cw &lt; canvasWidth)</span><br><span class="line">    &#123;</span><br><span class="line">        cw += cwSpeed;</span><br><span class="line">        ctx.clearRect(<span class="number">0</span>, <span class="number">0</span>, canvasWidth, canvasWidth);</span><br><span class="line">        ctx.fill();</span><br><span class="line">        draw(cw, pointR, aT);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        ctx.globalAlpha = <span class="number">0</span>;</span><br><span class="line">        clearInterval(timer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="number">50</span>);</span><br></pre></td></tr></table></figure>
 
 ]]></content>
+      <categories>
+        <category>CSS</category>
+      </categories>
+      <tags>
+        <tag>canvas</tag>
+      </tags>
   </entry>
 </search>
