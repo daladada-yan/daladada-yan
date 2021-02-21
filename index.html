@@ -205,6 +205,130 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/28/antd+react%E5%AE%9E%E7%8E%B0%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.png">
+      <meta itemprop="name" content="daladada">
+      <meta itemprop="description" content="众生皆苦，你是草莓味">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="daladada">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/28/antd+react%E5%AE%9E%E7%8E%B0%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/" class="post-title-link" itemprop="url">antd+react实现断点续传</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-28 14:22:00" itemprop="dateCreated datePublished" datetime="2020-11-28T14:22:00+08:00">2020-11-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-21 12:58:09" itemprop="dateModified" datetime="2021-02-21T12:58:09+08:00">2021-02-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/react-antd-%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">react,antd,断点续传</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/11/28/antd+react%E5%AE%9E%E7%8E%B0%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/11/28/antd+react%E5%AE%9E%E7%8E%B0%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>文件上传之后，获得文件的唯一标识（MD5值），将文件切割成多个分块，根据文件标识查询文件未上传的分块，所有分块上传完之后，将分块进行合并。</p>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><h5 id="1、上传文件"><a href="#1、上传文件" class="headerlink" title="1、上传文件"></a>1、上传文件</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> uploadProps = &#123;</span><br><span class="line">    name: <span class="string">"file"</span>,</span><br><span class="line">    accept: <span class="string">".zip"</span>,</span><br><span class="line">    maxCount: <span class="number">1</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Dragger</span> &#123;<span class="attr">...uploadProps</span>&#125;&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">className</span>=<span class="string">"ant-upload-drag-icon"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">InboxOutlined</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">className</span>=<span class="string">"ant-upload-text"</span>&gt;</span>点击或将文件拖拽到这里上传<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">className</span>=<span class="string">"ant-upload-hint"</span>&gt;</span></span><br><span class="line">    支持文件扩展名：.zip</span><br><span class="line">    <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Dragger</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="2、文件预处理"><a href="#2、文件预处理" class="headerlink" title="2、文件预处理"></a>2、文件预处理</h5><p>在文件上传之前，beforeUpload里对文件进行切割预处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 兼容性的处理</span><br><span class="line">           const blobSlice &#x3D; File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;</span><br><span class="line">           const chunkSize &#x3D; 1024 * 1024 * 5; &#x2F;&#x2F; 切片每次5M</span><br><span class="line">           const chunks &#x3D; Math.ceil(file.size &#x2F; chunkSize);</span><br><span class="line">           let currentChunk &#x3D; 0; &#x2F;&#x2F; 当前上传的chunk</span><br><span class="line">           const spark &#x3D; new SparkMD5.ArrayBuffer();</span><br><span class="line">           &#x2F;&#x2F; 对arrayBuffer数据进行md5加密，产生一个md5字符串</span><br><span class="line">           const chunkFileReader &#x3D; new FileReader(); &#x2F;&#x2F; 用于计算出每个chunkMd5</span><br><span class="line">           const params &#x3D; &#123; chunks: [], file: &#123;&#125;&#125;; &#x2F;&#x2F; 用于上传所有分片的md5信息</span><br><span class="line">           const arrayBufferDataT &#x3D; []; &#x2F;&#x2F; 用于存储每个chunk的arrayBuffer对象,用于分片上传使用</span><br><span class="line">		&#x2F;* 文件合并所需参数 *&#x2F;</span><br><span class="line">           params.file.fileName &#x3D; file.name; &#x2F;&#x2F; 文件名</span><br><span class="line">           params.file.totalSize &#x3D; file.size; &#x2F;&#x2F; 文件总大小</span><br><span class="line">           params.file.fileType &#x3D; file.type; &#x2F;&#x2F; 文件类型</span><br><span class="line">           params.file.relativePath &#x3D; file.name; &#x2F;&#x2F; 相对路径</span><br><span class="line">           params.file.refProjectId &#x3D; &quot;dbxt-sf-gd-sz&quot;; &#x2F;&#x2F; 文件唯一标识</span><br><span class="line"></span><br><span class="line">           function loadNext()</span><br><span class="line">           &#123;</span><br><span class="line">               const start &#x3D; currentChunk * chunkSize;</span><br><span class="line">               const end &#x3D; ((start + chunkSize) &gt;&#x3D; file.size) ? file.size : start + chunkSize;</span><br><span class="line">               chunkFileReader.readAsArrayBuffer(blobSlice.call(file, start, end));</span><br><span class="line">           &#125;</span><br><span class="line">           loadNext();</span><br><span class="line">           let identifier;</span><br><span class="line">           chunkFileReader.onload &#x3D; function(e)</span><br><span class="line">           &#123;</span><br><span class="line">               &#x2F;&#x2F; 对每一片分片进行md5加密</span><br><span class="line">               if (currentChunk &#x3D;&#x3D;&#x3D; 0)</span><br><span class="line">               &#123;</span><br><span class="line">                   spark.append(e.target.result);</span><br><span class="line">                   identifier &#x3D; spark.end();</span><br><span class="line">               &#125;</span><br><span class="line">               &#x2F;&#x2F; 每一个分片需要包含的信息</span><br><span class="line">               const obj &#x3D; &#123;</span><br><span class="line">                   totalSize: file.size,</span><br><span class="line">                   relativePath: file.name,</span><br><span class="line">                   chunkNumber: currentChunk + 1, &#x2F;&#x2F; 块编号</span><br><span class="line">                   fileName: file.name,</span><br><span class="line">                   identifier, &#x2F;&#x2F; 块编号</span><br><span class="line">                   totalChunks: chunks, &#x2F;&#x2F; 总分片数</span><br><span class="line">                   chunkSize, &#x2F;&#x2F; 块大小</span><br><span class="line">                   currentChunkSize: ((currentChunk * chunkSize + chunkSize) &gt;&#x3D; file.size) ? file.size - currentChunk * 							chunkSize : chunkSize &#x2F;&#x2F; 当前块大小</span><br><span class="line">               &#125;;</span><br><span class="line">               &#x2F;&#x2F; 每一次分片onload,currentChunk都需要增加，以便来计算分片的次数</span><br><span class="line">               currentChunk +&#x3D; 1;</span><br><span class="line">               params.chunks.push(obj);</span><br><span class="line"></span><br><span class="line">               &#x2F;&#x2F; 将每一块分片的arrayBuffer存储起来，用来partUpload</span><br><span class="line">               const tmp &#x3D; &#123;</span><br><span class="line">                   chunk: obj.chunkNumber,</span><br><span class="line">                   currentBuffer: e.target.result</span><br><span class="line">               &#125;;</span><br><span class="line">               arrayBufferDataT.push(tmp);</span><br><span class="line">               if (currentChunk &lt; chunks)</span><br><span class="line">               &#123;</span><br><span class="line">               &#x2F;&#x2F; 当前切片总数没有达到总数时</span><br><span class="line">                   loadNext();</span><br><span class="line">                   &#x2F;&#x2F; 计算预处理进度</span><br><span class="line">                   setpreUploading(true);</span><br><span class="line">                   setpreUploadPercent(Number((currentChunk &#x2F; chunks * 100).toFixed(2)));</span><br><span class="line">               &#125;</span><br><span class="line">               else</span><br><span class="line">               &#123;</span><br><span class="line">                   setchunksSize(chunks);</span><br><span class="line">                   setpreUploadPercent(100);</span><br><span class="line">                   setFileList([file]);</span><br><span class="line">                   &#x2F;&#x2F; 记录所有chunks的长度</span><br><span class="line">                   params.file.identifier &#x3D; identifier;</span><br><span class="line">                   params.file.fileChunks &#x3D; params.chunks.length;</span><br><span class="line">                   &#x2F;&#x2F; 表示预处理结束，将上传的参数，arrayBuffer的数据存储起来</span><br><span class="line">                   setarrayBufferData(arrayBufferDataT);</span><br><span class="line">                   setpreUploading(false);</span><br><span class="line">                   setuploadParams(params);</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;;</span><br><span class="line"></span><br><span class="line">           chunkFileReader.onerror &#x3D; function()</span><br><span class="line">           &#123;</span><br><span class="line">               console.warn(&quot;oops, something went wrong.&quot;);</span><br><span class="line">           &#125;;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3、上传分块"><a href="#3、上传分块" class="headerlink" title="3、上传分块"></a>3、上传分块</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">try</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F; 判断是否上传</span><br><span class="line">    const data &#x3D; await examChunk(chunks[0]);</span><br><span class="line">    let &#123; uploadedChunks &#125; &#x3D; data || []; &#x2F;&#x2F; 已上传文件</span><br><span class="line">    uploadedChunks &#x3D; Array.from(new Set(uploadedChunks));</span><br><span class="line">    if (uploadedChunks.length &#x3D;&#x3D;&#x3D; uploadParams.file.fileChunks || data.skipUpload) &#x2F;&#x2F; 如果全部文件快已上传 则直接完成 实现秒传</span><br><span class="line">    &#123;</span><br><span class="line">        setuploadPercent(100); &#x2F;&#x2F; 文件上传进度</span><br><span class="line">        mergeFile();&#x2F;&#x2F; 合并文件</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">    &#123;</span><br><span class="line">        setuploadPercent(Number((uploadedChunks.length &#x2F; uploadParams.file.fileChunks * 100).toFixed(2)));</span><br><span class="line">        const uploadList &#x3D; chunks.filter(item &#x3D;&gt; &#123; return uploadedChunks.indexOf(item.chunkNumber) &lt; 0; &#125;);&#x2F;&#x2F; 过滤出未上传分片</span><br><span class="line">        handlePartUpload(uploadList, uploadList.length); &#x2F;&#x2F; 分片上传</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">catch (error)</span><br><span class="line">&#123;</span><br><span class="line">    console.log(error);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 分片上传</span><br><span class="line">const handlePartUpload &#x3D; (uploadList, currentChunks) &#x3D;&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        let current &#x3D; currentChunks;</span><br><span class="line">        uploadList.forEach(async(element) &#x3D;&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            const blobSlice &#x3D; File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;</span><br><span class="line">            const &#123; identifier, chunkNumber &#125; &#x3D; element;</span><br><span class="line">            const formData &#x3D; new FormData();</span><br><span class="line">            &#x2F;&#x2F; 新建一个Blob对象，将对应分片的arrayBuffer加入Blob中</span><br><span class="line">            const blob &#x3D; new Blob([arrayBufferData[chunkNumber - 1].currentBuffer], &#123; type: &quot;application&#x2F;octet-stream&quot; &#125;);</span><br><span class="line">            &#x2F;&#x2F; 将生成blob塞入到formdata中传入服务端</span><br><span class="line">            formData.append(&quot;upfile&quot;, blob, identifier);</span><br><span class="line">            Object.keys(element).forEach(el &#x3D;&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                formData.append(el, element[el]);</span><br><span class="line">            &#125;);</span><br><span class="line">            try</span><br><span class="line">            &#123;</span><br><span class="line">                const uploadData &#x3D; await upload(formData);</span><br><span class="line">                if (uploadData &#x3D;&#x3D;&#x3D; 200)</span><br><span class="line">                &#123;</span><br><span class="line">                    current -&#x3D; 1;</span><br><span class="line">                    setuploadPercent(Number(((uploadParams.file.fileChunks - current) &#x2F; uploadParams.file.fileChunks * 100).toFixed(2)));</span><br><span class="line">                    if (current &#x3D;&#x3D;&#x3D; 0)</span><br><span class="line">                    &#123;</span><br><span class="line">                        mergeFile();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                else</span><br><span class="line">                &#123;</span><br><span class="line">                    setUploadFailed(true);</span><br><span class="line">                    setspinning(false);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            catch (error)</span><br><span class="line">            &#123;</span><br><span class="line">                setUploadFailed(true);</span><br><span class="line">                setspinning(false);</span><br><span class="line">                console.log(error);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="4、合并文件块"><a href="#4、合并文件块" class="headerlink" title="4、合并文件块"></a>4、合并文件块</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">const mergeFile &#x3D; async() &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    try</span><br><span class="line">    &#123;</span><br><span class="line">        const mergeData &#x3D; await merge(uploadParams.file);</span><br><span class="line">        if (mergeData.id)</span><br><span class="line">        &#123;</span><br><span class="line">            &#x2F;&#x2F; setUpfileId(mergeData.id);</span><br><span class="line">            &#x2F;&#x2F; message.success(&#39;上传成功&#39;);</span><br><span class="line">            createData(mergeData.id);</span><br><span class="line">            setuploading(false);</span><br><span class="line">            setuploaded(true);</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            setspinning(false);</span><br><span class="line">            setUploadFailed(true);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    catch (error)</span><br><span class="line">    &#123;</span><br><span class="line">        setspinning(false);</span><br><span class="line">        setUploadFailed(true);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+      
+    </div>
+
+    
+    
+    
+    
+    <div>
+      
+    </div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/28/canvas%E7%94%BB%E5%B8%83%E5%AE%9E%E7%8E%B0%E7%83%9F%E8%8A%B1%E7%BB%BD%E6%94%BE%E6%95%88%E6%9E%9C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -393,20 +517,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-count">2</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -439,7 +563,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -449,13 +573,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">12k</span>
+    <span title="站点总字数">17k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">10 分钟</span>
+    <span title="站点阅读时长">16 分钟</span>
 </div>
 <!--
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
