@@ -205,7 +205,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/28/antd+react%E5%AE%9E%E7%8E%B0%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/19/Ailabel+react%E5%AE%9E%E7%8E%B0%E5%9B%BE%E7%89%87%E6%A0%87%E6%B3%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.png">
@@ -219,7 +219,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2020/11/28/antd+react%E5%AE%9E%E7%8E%B0%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/" class="post-title-link" itemprop="url">antd+react实现断点续传</a>
+            <a href="/2021/03/19/Ailabel+react%E5%AE%9E%E7%8E%B0%E5%9B%BE%E7%89%87%E6%A0%87%E6%B3%A8/" class="post-title-link" itemprop="url">Ailabel+react实现图片标注</a>
         </h1>
 
         <div class="post-meta">
@@ -228,24 +228,168 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-11-28 14:22:00" itemprop="dateCreated datePublished" datetime="2020-11-28T14:22:00+08:00">2020-11-28</time>
+              <time title="创建时间：2021-03-19 11:49:01 / 修改时间：14:17:11" itemprop="dateCreated datePublished" datetime="2021-03-19T11:49:01+08:00">2021-03-19</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-21 12:58:09" itemprop="dateModified" datetime="2021-02-21T12:58:09+08:00">2021-02-21</time>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/03/19/Ailabel+react%E5%AE%9E%E7%8E%B0%E5%9B%BE%E7%89%87%E6%A0%87%E6%B3%A8/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/03/19/Ailabel+react%E5%AE%9E%E7%8E%B0%E5%9B%BE%E7%89%87%E6%A0%87%E6%B3%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
               </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <hr>
+<p>title: Ailabel+react实现图片标注<br>date: 2021-03-19 11:49:00<br>tags: react|aiLabel<br>categories: react</p>
+<hr>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>对图片进行标注，包括画矩形框、多边形框和线条。<a href="https://dingyang9642.github.io/AILabel/#/" target="_blank" rel="noopener">官网传送门</a></p>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><h5 id="1、环境准备"><a href="#1、环境准备" class="headerlink" title="1、环境准备"></a>1、环境准备</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 安装ailabel依赖</span></span><br><span class="line"># npm install ailabel --save</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 页面引入ailabel</span></span><br><span class="line"><span class="keyword">const</span> AILabel = <span class="built_in">require</span>(<span class="string">"AILabel"</span>);</span><br></pre></td></tr></table></figure>
+
+<h5 id="2、Map对象实例化"><a href="#2、Map对象实例化" class="headerlink" title="2、Map对象实例化"></a>2、Map对象实例化</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const gMap &#x3D; new AILabel.Map(&quot;AiLabelImg&quot;, &#123; zoom: 0, cx: 0, cy: 0, zoomMax: 400 * 10, zoomMin: 400 &#x2F; 10, autoPan: true, drawZoom: true &#125;);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">render()</span><br><span class="line">&#123;</span><br><span class="line">    return (</span><br><span class="line">        &lt;div id&#x3D;&quot;AiLabelImg&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>map实例参数说明：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>zoom</td>
+<td>初始缩放级别</td>
+</tr>
+<tr>
+<td>cx</td>
+<td>初始中心点坐标x</td>
+</tr>
+<tr>
+<td>cy</td>
+<td>初始中心点坐标y</td>
+</tr>
+<tr>
+<td>zoomMax</td>
+<td>缩放最大级别</td>
+</tr>
+<tr>
+<td>zoomMin</td>
+<td>缩放最小级别</td>
+</tr>
+<tr>
+<td>autoPan</td>
+<td>绘制过程中是否禁止自动平移</td>
+</tr>
+<tr>
+<td>drawZoom</td>
+<td>绘制过程中是否禁止滑轮缩放</td>
+</tr>
+<tr>
+<td>autoFeatureSelect</td>
+<td>默认是否双击选中feature</td>
+</tr>
+</tbody></table>
+<h5 id="3、添加图像层"><a href="#3、添加图像层" class="headerlink" title="3、添加图像层"></a>3、添加图像层</h5><p>为避免图像在容器中出现变形，先计算容器的宽高和图片的宽高，根据宽高比例自适应显示图片。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 获取容器的宽高</span><br><span class="line">initWidth &#x3D; document.getElementById(&quot;AiLabelImg&quot;).clientWidth;</span><br><span class="line">initHeight &#x3D; document.getElementById(&quot;AiLabelImg&quot;).clientHeight;</span><br><span class="line">const image &#x3D; new Image();</span><br><span class="line">image.src &#x3D; imgUrl;&#x2F;&#x2F; 图片地址</span><br><span class="line">image.onload &#x3D; () &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    imgInitW &#x3D; image.width;</span><br><span class="line">    imgInitH &#x3D; image.height;</span><br><span class="line">    imgSjW &#x3D; initWidth;</span><br><span class="line">    imgSjH &#x3D; initHeight;</span><br><span class="line">    const sR &#x3D; imgInitW &#x2F; imgInitH;</span><br><span class="line">    const iR &#x3D; initWidth &#x2F; initHeight;</span><br><span class="line">    &#x2F;&#x2F; 如果图片宽度大于高度 则宽度百分百  高度自适应</span><br><span class="line">    if (sR &gt;&#x3D; iR)</span><br><span class="line">    &#123;</span><br><span class="line">        imgSjH &#x3D; Math.floor(initWidth &#x2F; imgInitW * imgInitH);</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">    &#123;</span><br><span class="line">        &#x2F;&#x2F; 如果图片高度大于宽度 则高度百分百  宽度自适应</span><br><span class="line">        imgSjW &#x3D; Math.floor(initHeight &#x2F; imgInitH * imgInitW);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F; 图片层实例\添加</span><br><span class="line">    const gImageLayer &#x3D; new AILabel.Layer.Image(&quot;img&quot;, props.url, &#123; h: imgSjH, w: imgSjW &#125;, &#123;&#125;);</span><br><span class="line">    gMap.addLayer(gImageLayer);</span><br><span class="line">    const gFeatureLayer &#x3D; new AILabel.Layer.Feature(&#96;featureid&#96;, &#123; opacity: 1, zIndex: 4 &#125;);</span><br><span class="line">&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="4、画矩形框"><a href="#4、画矩形框" class="headerlink" title="4、画矩形框"></a>4、画矩形框</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">const gTextStyle &#x3D; new AILabel.Style(&#123; strokeColor: &quot;#E43446&quot;, lineWeight: 2, fillColor: &quot;rgba(0,0,0,0)&quot; &#125;);</span><br><span class="line">&#x2F;&#x2F; 设置模式为矩形框</span><br><span class="line">gMap.setMode(&quot;drawRect&quot;, gTextStyle);</span><br><span class="line">&#x2F;&#x2F; 监听绘制过程 </span><br><span class="line">&#x2F;&#x2F; 绘制完成，将绘制的坐标值显示</span><br><span class="line">const count &#x3D; 0;</span><br><span class="line">gMap.events.on(&quot;geometryDrawDone&quot;, (type, points) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F; 每次画框的featureId都需要不一样，可以用count计数</span><br><span class="line">    feature &#x3D; new AILabel.Feature.Rect(&#96;rectid$&#123;count&#125;&#96;, points, &#123; name: &quot;矩形框&quot; &#125;, style);</span><br><span class="line">    gFeatureLayer.addFeature(feature);</span><br><span class="line">    count +&#x3D; 1;</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;&#x2F; 编辑完成，替换新的点坐标值</span><br><span class="line">gMap.events.on(&quot;geometryEditDone&quot;, (type, feature, newPoints) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    feature.show();</span><br><span class="line">    feature.update(&#123; points: newPoints &#125;);</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;&#x2F; 绘制过程中，将之前的框先隐藏</span><br><span class="line">gMap.events.on(&quot;geometryEditing&quot;, (type, feature) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    feature.hide();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h5 id="5、完整代码"><a href="#5、完整代码" class="headerlink" title="5、完整代码"></a>5、完整代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br></pre></td><td class="code"><pre><span class="line">import React, &#123;</span><br><span class="line">    useImperativeHandle,</span><br><span class="line">    forwardRef,</span><br><span class="line">    useEffect</span><br><span class="line">&#125; from &quot;react&quot;;</span><br><span class="line">import styles from &quot;.&#x2F;index.less&quot;;</span><br><span class="line">import &#123; message &#125; from &quot;antd&quot;;</span><br><span class="line">import &#123; canvasToAil, aiToCanvas &#125; from &quot;@&#x2F;utils&#x2F;utils&quot;;</span><br><span class="line">import PropTypes from &quot;prop-types&quot;;</span><br><span class="line"></span><br><span class="line">const AILabel &#x3D; require(&quot;AILabel&quot;);</span><br><span class="line"></span><br><span class="line">let gMap;</span><br><span class="line">let gImageLayer;</span><br><span class="line">let count &#x3D; 0;</span><br><span class="line">let gFeatureLayer;</span><br><span class="line">let selectedFeature &#x3D; null;</span><br><span class="line">let showFlag &#x3D; true;</span><br><span class="line">let initWidth &#x3D; 700;&#x2F;&#x2F; 盒子宽</span><br><span class="line">let initHeight &#x3D; 400;&#x2F;&#x2F; 盒子的高</span><br><span class="line">let initZoom;&#x2F;&#x2F; 初始放大值</span><br><span class="line">let initCenter;&#x2F;&#x2F; 初始中心点</span><br><span class="line">let gTextStyle; &#x2F;&#x2F; 画笔样式</span><br><span class="line">let preTextStyle;</span><br><span class="line">let labelList &#x3D; [];&#x2F;&#x2F; 所有框的坐标和标签数据</span><br><span class="line">let current &#x3D; &#123;&#125;; &#x2F;&#x2F; 当前框的坐标和标签数据</span><br><span class="line">&#x2F;* 用于坐标值转换参数 *&#x2F;</span><br><span class="line">let imgInitH; &#x2F;&#x2F; 图片的初始宽度</span><br><span class="line">let imgInitW; &#x2F;&#x2F; 图片的初始高度</span><br><span class="line">let imgSjH;</span><br><span class="line">let imgSjW;</span><br><span class="line">const MONITOR_CANVAS &#x3D; (props, ref) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    const textAndRect &#x3D; (points, created, index, isPreAnnotation) &#x3D;&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        let feature;</span><br><span class="line">        let style;</span><br><span class="line">        if (isPreAnnotation &#x3D;&#x3D;&#x3D; &quot;1&quot;)</span><br><span class="line">        &#123;</span><br><span class="line">            style &#x3D; preTextStyle;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            style &#x3D; gTextStyle;</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F; 实例化矩形形</span><br><span class="line">        if (props.type &#x3D;&#x3D;&#x3D; &quot;2&quot; || props.type &#x3D;&#x3D;&#x3D; &quot;1&quot;)</span><br><span class="line">        &#123;</span><br><span class="line">            feature &#x3D; new AILabel.Feature.Rect(&#96;rectid$&#123;count&#125;&#96;, points, &#123; name: &quot;矩形框&quot; &#125;, style);</span><br><span class="line">        &#125;</span><br><span class="line">        else if (props.type &#x3D;&#x3D;&#x3D; &quot;4&quot;)</span><br><span class="line">        &#123;</span><br><span class="line">            feature &#x3D; new AILabel.Feature.Polygon(&#96;rectid$&#123;count&#125;&#96;, points, &#123; name: &quot;多变型&quot; &#125;, style);</span><br><span class="line">        &#125;</span><br><span class="line">        gFeatureLayer.addFeature(feature);</span><br><span class="line">        count +&#x3D; 1;</span><br><span class="line">    &#125;;</span><br><span class="line">    useEffect(() &#x3D;&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        if (props.url)</span><br><span class="line">        &#123;</span><br><span class="line">            initWidth &#x3D; document.getElementById(&quot;AiLabelImgWrapper&quot;).clientWidth;</span><br><span class="line">            initHeight &#x3D; document.getElementById(&quot;AiLabelImgWrapper&quot;).clientHeight;</span><br><span class="line">            const image &#x3D; new Image();</span><br><span class="line">            image.src &#x3D; props.url;</span><br><span class="line">            image.onload &#x3D; () &#x3D;&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                imgInitW &#x3D; image.width;</span><br><span class="line">                imgInitH &#x3D; image.height;</span><br><span class="line">                imgSjW &#x3D; initWidth;</span><br><span class="line">                imgSjH &#x3D; initHeight;</span><br><span class="line">                const sR &#x3D; imgInitW &#x2F; imgInitH;</span><br><span class="line">                const iR &#x3D; initWidth &#x2F; initHeight;</span><br><span class="line">                &#x2F;&#x2F; 如果图片宽度大于高度 则宽度百分百  高度自适应</span><br><span class="line">                if (sR &gt;&#x3D; iR)</span><br><span class="line">                &#123;</span><br><span class="line">                    imgSjH &#x3D; Math.floor(initWidth &#x2F; imgInitW * imgInitH);</span><br><span class="line">                &#125;</span><br><span class="line">                else</span><br><span class="line">                &#123;</span><br><span class="line">                    &#x2F;&#x2F; 如果图片高度大于宽度 则高度百分百  宽度自适应</span><br><span class="line">                    imgSjW &#x3D; Math.floor(initHeight &#x2F; imgInitH * imgInitW);</span><br><span class="line">                &#125;</span><br><span class="line">                count &#x3D; 0;</span><br><span class="line">                labelList &#x3D; [];</span><br><span class="line">                &#x2F;&#x2F; document.getElementById(&quot;AiLabelImg&quot;).style.width &#x3D; &#96;$&#123;imgSjW&#125;px&#96;;</span><br><span class="line">                &#x2F;&#x2F; document.getElementById(&quot;AiLabelImg&quot;).style.height &#x3D; &#96;$&#123;imgSjH&#125;px&#96;;</span><br><span class="line">                gMap &#x3D; new AILabel.Map(&quot;AiLabelImg&quot;, &#123; zoom: 0, cx: 0, cy: 0, zoomMax: 400 * 10, zoomMin: 400 &#x2F; 10, autoPan: true, drawZoom: true &#125;);</span><br><span class="line">                gMap.tipLayer.hideTips(); &#x2F;&#x2F; 关闭tip提示</span><br><span class="line">                &#x2F;&#x2F; 图片层实例\添加</span><br><span class="line">                gImageLayer &#x3D; new AILabel.Layer.Image(&quot;img&quot;, props.url, &#123; h: imgSjH, w: imgSjW &#125;, &#123;&#125;);</span><br><span class="line">                gMap.addLayer(gImageLayer);</span><br><span class="line">                gFeatureLayer &#x3D; new AILabel.Layer.Feature(&#96;featureid&#96;, &#123; opacity: 1, zIndex: 4 &#125;);</span><br><span class="line">                gMap.addLayer(gFeatureLayer);</span><br><span class="line">                initZoom &#x3D; gMap.getZoom();</span><br><span class="line">                initCenter &#x3D; gMap.getCenter();</span><br><span class="line">                &#x2F;&#x2F; 样式</span><br><span class="line">                gTextStyle &#x3D; new AILabel.Style(&#123; strokeColor: &quot;#E43446&quot;, lineWeight: 2, fillColor: &quot;rgba(0,0,0,0)&quot; &#125;);</span><br><span class="line">                preTextStyle &#x3D; new AILabel.Style(&#123; strokeColor: &quot;#0FA883&quot;, lineWeight: 2, fillColor: &quot;rgba(0,0,0,0)&quot; &#125;);</span><br><span class="line">                gMap.events.on(&quot;featureSelected&quot;, feature &#x3D;&gt;</span><br><span class="line">                &#123;</span><br><span class="line">                    &#x2F;&#x2F; TODO 框被选中</span><br><span class="line">                &#125;);</span><br><span class="line">                gMap.events.on(&quot;featureStatusReset&quot;, () &#x3D;&gt;</span><br><span class="line">                &#123;</span><br><span class="line">                   &#x2F;&#x2F; TODO 框失去焦点</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, [props.url]);</span><br><span class="line">    useImperativeHandle(ref, () &#x3D;&gt; (&#123;</span><br><span class="line">        &#x2F;&#x2F; 窗口自适应</span><br><span class="line">        autoWindow()</span><br><span class="line">        &#123;</span><br><span class="line">            gMap.centerAndZoom(initCenter, initZoom);</span><br><span class="line">        &#125;,</span><br><span class="line">        &#x2F;&#x2F;回复浏览模式</span><br><span class="line">        autoWidth()</span><br><span class="line">        &#123;</span><br><span class="line">            gMap.setMode(&quot;pan&quot;);</span><br><span class="line">        &#125;,</span><br><span class="line">        &#x2F;&#x2F; 原始尺寸</span><br><span class="line">        initWidth()</span><br><span class="line">        &#123;</span><br><span class="line">            gMap.centerAndZoom(initCenter, initZoom);</span><br><span class="line">        &#125;,</span><br><span class="line">        imgZoomIn()</span><br><span class="line">        &#123;</span><br><span class="line">            gMap.zoomIn();</span><br><span class="line">        &#125;,</span><br><span class="line">        imgZoomOut()</span><br><span class="line">        &#123;</span><br><span class="line">            gMap.zoomOut();</span><br><span class="line">        &#125;,</span><br><span class="line">        draw()</span><br><span class="line">        &#123;</span><br><span class="line">            if (gFeatureLayer)</span><br><span class="line">            &#123;</span><br><span class="line">                if (props.type &#x3D;&#x3D;&#x3D; &quot;2&quot; || props.type &#x3D;&#x3D;&#x3D; &quot;1&quot;)</span><br><span class="line">                &#123;</span><br><span class="line">                    gMap.setMode(&quot;drawRect&quot;, gTextStyle);</span><br><span class="line">                &#125;</span><br><span class="line">                else if (props.type &#x3D;&#x3D;&#x3D; &quot;4&quot;)</span><br><span class="line">                &#123;</span><br><span class="line">                    gMap.setMode(&quot;drawPolygon&quot;, gTextStyle);</span><br><span class="line">                &#125;</span><br><span class="line">                gMap.events.on(&quot;geometryDrawDone&quot;, (type, points) &#x3D;&gt;</span><br><span class="line">                &#123;</span><br><span class="line">                    textAndRect(points, true, 0, null, &quot;0&quot;);</span><br><span class="line">                &#125;);</span><br><span class="line">                gMap.events.on(&quot;geometryEditDone&quot;, (type, feature, newPoints) &#x3D;&gt;</span><br><span class="line">                &#123;</span><br><span class="line">                    feature.show();</span><br><span class="line">                    feature.update(&#123; points: newPoints &#125;);</span><br><span class="line">                &#125;);</span><br><span class="line">                gMap.events.on(&quot;geometryEditing&quot;, (type, feature) &#x3D;&gt;</span><br><span class="line">                &#123;</span><br><span class="line">                    feature.hide();</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &#x2F;&#x2F; 复制框</span><br><span class="line">        copyLabel()</span><br><span class="line">        &#123;</span><br><span class="line">            if (selectedFeature &#x3D;&#x3D;&#x3D; null)</span><br><span class="line">            &#123;</span><br><span class="line">                message.error(&quot;未选择框进行复制操作&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">            &#123;</span><br><span class="line">                const copyPoint &#x3D; [];</span><br><span class="line">                selectedFeature.points.forEach(item &#x3D;&gt;</span><br><span class="line">                &#123;</span><br><span class="line">                    copyPoint.push(&#123;</span><br><span class="line">                        x: item.x + 10,</span><br><span class="line">                        y: item.y - 10</span><br><span class="line">                    &#125;);</span><br><span class="line">                &#125;);</span><br><span class="line">                selectedFeature.deActive();</span><br><span class="line">                textAndRect(copyPoint, true, 0, null, &quot;0&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &#x2F;&#x2F; 删除框</span><br><span class="line">        deleteLabel()</span><br><span class="line">        &#123;</span><br><span class="line">            if (selectedFeature &#x3D;&#x3D;&#x3D; null)</span><br><span class="line">            &#123;</span><br><span class="line">                message.error(&quot;未选择框进行删除操作&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">            &#123;</span><br><span class="line">                &#x2F;&#x2F; 修改操作</span><br><span class="line">                gFeatureLayer.removeFeature(selectedFeature);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        showHideAll()</span><br><span class="line">        &#123;</span><br><span class="line">            const allFeatures &#x3D; gFeatureLayer.getAllFeatures(); &#x2F;&#x2F; 返回所有要素数据</span><br><span class="line">            allFeatures.forEach(feature &#x3D;&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                if (showFlag)</span><br><span class="line">                &#123;</span><br><span class="line">                    feature.hide();</span><br><span class="line">                &#125;</span><br><span class="line">                else</span><br><span class="line">                &#123;</span><br><span class="line">                    feature.show();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">            showFlag &#x3D; !showFlag;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;));</span><br><span class="line"></span><br><span class="line">    return (</span><br><span class="line">        &lt;div id&#x3D;&quot;AiLabelImgWrapper&quot; className&#x3D;&#123;styles[&quot;ailabel-img&quot;]&#125;&gt;</span><br><span class="line">            &lt;div id&#x3D;&quot;AiLabelImg&quot; className&#x3D;&#123;styles[&quot;ailabel-img&quot;]&#125;&gt;&lt;&#x2F;div&gt;</span><br><span class="line">        &lt;&#x2F;div&gt;</span><br><span class="line">    );</span><br><span class="line">&#125;;</span><br><span class="line">export default forwardRef(MONITOR_CANVAS);</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+    
+    <div>
+      
+    </div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/21/antd+react%E5%AE%9E%E7%8E%B0%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.png">
+      <meta itemprop="name" content="daladada">
+      <meta itemprop="description" content="众生皆苦，你是草莓味">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="daladada">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/21/antd+react%E5%AE%9E%E7%8E%B0%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/" class="post-title-link" itemprop="url">antd+react实现断点续传</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-21 13:03:00 / 修改时间：13:04:18" itemprop="dateCreated datePublished" datetime="2021-02-21T13:03:00+08:00">2021-02-21</time>
+            </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/react-antd-%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/" itemprop="url" rel="index">
-                    <span itemprop="name">react,antd,断点续传</span>
+                  <a href="/categories/react/" itemprop="url" rel="index">
+                    <span itemprop="name">react</span>
                   </a>
                 </span>
             </span>
@@ -259,8 +403,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2020/11/28/antd+react%E5%AE%9E%E7%8E%B0%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/11/28/antd+react%E5%AE%9E%E7%8E%B0%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/" itemprop="commentCount"></span>
+    <a title="valine" href="/2021/02/21/antd+react%E5%AE%9E%E7%8E%B0%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/02/21/antd+react%E5%AE%9E%E7%8E%B0%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -517,7 +661,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -573,13 +717,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">17k</span>
+    <span title="站点总字数">26k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">16 分钟</span>
+    <span title="站点阅读时长">24 分钟</span>
 </div>
 <!--
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
