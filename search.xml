@@ -25,7 +25,9 @@
         <category>react</category>
       </categories>
       <tags>
+        <tag>断点续传</tag>
         <tag>react</tag>
+        <tag>antd</tag>
       </tags>
   </entry>
   <entry>
@@ -45,10 +47,11 @@
 
 ]]></content>
       <categories>
-        <category>懒加载</category>
+        <category>react</category>
       </categories>
       <tags>
-        <tag>react</tag>
+        <tag>antd</tag>
+        <tag>懒加载</tag>
       </tags>
   </entry>
   <entry>
@@ -113,10 +116,12 @@
 
 ]]></content>
       <categories>
-        <category>ailabel</category>
+        <category>react</category>
       </categories>
       <tags>
         <tag>react</tag>
+        <tag>antd</tag>
+        <tag>ailabel</tag>
       </tags>
   </entry>
   <entry>
@@ -150,6 +155,7 @@
       </categories>
       <tags>
         <tag>canvas</tag>
+        <tag>css</tag>
       </tags>
   </entry>
 </search>
