@@ -126,7 +126,7 @@
   </entry>
   <entry>
     <title>vue+echarts-wordcloud字符云踩雷</title>
-    <url>/2021/04/06/vue+echarts-wordcloud%E5%AD%97%E7%AC%A6%E4%BA%91%E8%B8%A9%E9%9B%B7/</url>
+    <url>/2021/04/16/vue+echarts-wordcloud%E5%AD%97%E7%AC%A6%E4%BA%91%E8%B8%A9%E9%9B%B7/</url>
     <content><![CDATA[<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>报表统计某个项目中使用的关键字数量集合，由于关键字是用户自定义输入，存在不可控性，可能会有大量不同的关键字存在，于是便想到了用字符云做统计。实现效果：</p>
 <p><img src="http://image.berlin4h.top/images/2021/04/16/20210416104154.png" alt=""></p>
 <h4 id="踩雷过程"><a href="#踩雷过程" class="headerlink" title="踩雷过程"></a>踩雷过程</h4><h5 id="1、安装依赖"><a href="#1、安装依赖" class="headerlink" title="1、安装依赖"></a>1、安装依赖</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm install echarts;</span><br><span class="line">npm install echarts-wordcloud</span><br></pre></td></tr></table></figure>
