@@ -1,6 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>react实现图片懒加载</title>
+    <url>/2021/04/06/react%E5%AE%9E%E7%8E%B0%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD/</url>
+    <content><![CDATA[<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>某些网站中拥有大量图片，但用户可视区范围内，只展示一小部分的图片，如果不对图片进行懒加载，在网速较慢或图片资源过大的情况下，会出现加载缓慢卡顿的现象，影响用户体验。针对这种情况提出先加载用户可视范围内的图片，其他图片等用户进行操作（滑动或点击按钮）时再进行加载。</p>
+<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><h5 id="1、图片列表"><a href="#1、图片列表" class="headerlink" title="1、图片列表"></a>1、图片列表</h5><p>先不对图片标签赋值图片的地址，将地址放到父级里面利用data-source保存。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;div id&#x3D;&quot;imgWrapper&quot;&gt;</span><br><span class="line">    &lt;ul id&#x3D;&quot;imgList&quot;&gt;</span><br><span class="line">        &#123;taskImg.map((item, index) &#x3D;&gt;(</span><br><span class="line">            &lt;li key&#x3D;&#123;&#96;img$&#123;index&#125;&#96;&#125;</span><br><span class="line">                lazyload&#x3D;&quot;true&quot;</span><br><span class="line">                data-original&#x3D;&#123;download() + item.imageId&#125;&gt;</span><br><span class="line">                &lt;Image</span><br><span class="line">                    width&#x3D;&#123;150&#125;</span><br><span class="line">                    height&#x3D;&#123;150&#125;</span><br><span class="line">                    src&#x3D;&quot;&quot;&#x2F;&gt;</span><br><span class="line">            &lt;&#x2F;li&gt;</span><br><span class="line">        ))&#125;</span><br><span class="line">    &lt;&#x2F;ul&gt;</span><br><span class="line">&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2、页面滑动"><a href="#2、页面滑动" class="headerlink" title="2、页面滑动"></a>2、页面滑动</h5><p>横向滚动</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 获取未显示的图片列表</span><br><span class="line">const imgList &#x3D; document.getElementById(&quot;imgList&quot;).querySelectorAll(&quot;li[data-original][lazyload]&quot;);</span><br><span class="line">&#x2F;&#x2F; 获取主容器左边距离和右边距离</span><br><span class="line">const wrapper &#x3D; document.getElementById(&quot;imgWrapper&quot;);</span><br><span class="line">const initRect &#x3D; wrapper.getBoundingClientRect();</span><br><span class="line">const initLeft &#x3D; initRect.left;</span><br><span class="line">const initRight &#x3D; initRect.right;</span><br><span class="line">imgList.forEach((item, index) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    const img &#x3D; item.firstChild.firstChild;&#x2F;&#x2F;获取图片元素</span><br><span class="line">    const rect &#x3D; item.getBoundingClientRect();</span><br><span class="line">    let rectL &#x3D; rect.left + rect.width;&#x2F;&#x2F; 图片到可视区域左边距离</span><br><span class="line">    let rectR &#x3D; rect.right - rect.width;&#x2F;&#x2F; 图片到可视区域右边距离</span><br><span class="line">    &#x2F;&#x2F; 判断是否在可视区域内</span><br><span class="line">    if ((rect.left &gt;&#x3D; initLeft &amp;&amp; rectR &lt;&#x3D; initRight) || (rectL &gt;&#x3D; initLeft &amp;&amp; rect.right &lt;&#x3D; initRight))</span><br><span class="line">    &#123;</span><br><span class="line">        img.src &#x3D; item.dataset.original;</span><br><span class="line">        item.removeAttribute(&quot;data-original&quot;);&#x2F;&#x2F; 移除属性，下次不再遍历</span><br><span class="line">        item.removeAttribute(&quot;lazyload&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>竖向滚动</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 获取未显示的图片列表</span><br><span class="line">const imgList &#x3D; document.getElementById(&quot;imgList&quot;).querySelectorAll(&quot;li[data-original][lazyload]&quot;);</span><br><span class="line">imgList.forEach((item, index) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    const img &#x3D; item.firstChild.firstChild;&#x2F;&#x2F;获取图片元素</span><br><span class="line">    &#x2F;&#x2F; 判断是否在可视区域内</span><br><span class="line">    if (img.offsetTop &lt; window.innerHeight + window.pageYOffset)</span><br><span class="line">    &#123;</span><br><span class="line">        img.src &#x3D; item.dataset.original;</span><br><span class="line">        item.removeAttribute(&quot;data-original&quot;);&#x2F;&#x2F; 移除属性，下次不再遍历</span><br><span class="line">        item.removeAttribute(&quot;lazyload&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+]]></content>
+      <categories>
+        <category>react</category>
+      </categories>
+      <tags>
+        <tag>懒加载</tag>
+        <tag>antd</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SVG实现logo及点击动态效果</title>
+    <url>/2021/07/06/SVG%E5%AE%9E%E7%8E%B0logo%E5%8F%8A%E7%82%B9%E5%87%BB%E5%8A%A8%E6%80%81%E6%95%88%E6%9E%9C/</url>
+    <content><![CDATA[<h3 id="效果展示"><a href="#效果展示" class="headerlink" title="效果展示"></a>效果展示</h3><p><img src="http://image.berlin4h.top/images/2021/07/06/GIF-2021-7-6--16-48-40.gif" alt=""></p>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><h5 id="1、路径绘图"><a href="#1、路径绘图" class="headerlink" title="1、路径绘图"></a>1、路径绘图</h5><p>图标主要是用svg的path属性，首先先了解一下，path有哪些命令。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>属性</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>M</td>
+<td>移动到某个点</td>
+</tr>
+<tr>
+<td>L</td>
+<td>画直线</td>
+</tr>
+<tr>
+<td>H</td>
+<td>水平线</td>
+</tr>
+<tr>
+<td>V</td>
+<td>垂直线</td>
+</tr>
+<tr>
+<td>C</td>
+<td>二次赛贝尔曲线</td>
+</tr>
+<tr>
+<td>S</td>
+<td>平滑二次赛贝尔曲线</td>
+</tr>
+<tr>
+<td>Q</td>
+<td>三次赛贝尔曲线</td>
+</tr>
+<tr>
+<td>T</td>
+<td>平滑赛贝尔曲线</td>
+</tr>
+<tr>
+<td>A</td>
+<td>弧线</td>
+</tr>
+<tr>
+<td>Z</td>
+<td>结束点</td>
+</tr>
+</tbody></table>
+<h5 id="2、简单绘图"><a href="#2、简单绘图" class="headerlink" title="2、简单绘图"></a>2、简单绘图</h5><p>现在先简单的绘制一个屋顶三角形，图标大小为45 X 45。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">width</span>=<span class="string">"45"</span> <span class="attr">height</span>=<span class="string">"45"</span> <span class="attr">class</span>=<span class="string">"path"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">path</span> <span class="attr">d</span>=<span class="string">"M 1 22 </span></span></span><br><span class="line"><span class="tag"><span class="string">			 L 22.5 1</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 44 22</span></span></span><br><span class="line"><span class="tag"><span class="string">			  Z"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.berlin4h.top/images/2021/07/20/20210720180223.png" alt=""></p>
+<h5 id="3、添加圆角"><a href="#3、添加圆角" class="headerlink" title="3、添加圆角"></a>3、添加圆角</h5><p>因为图标所有线条的连接点都是圆滑的曲线，只是单纯的用坐标绘制会得到如上图所示生硬的结果，于是二次赛贝尔曲线就出现了。利用三次赛贝尔曲线的原理，以转折点的左边坐标点为起始点，然后以转折点为控制点，转折点右边坐标点为终点。先拿顶角为例，顶角坐标为 （22.5,1），圆角的实现为：</p>
+<p>起始点  (21.5 2)、控制点（22.5,1）、终点（23.5,2）</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">width</span>=<span class="string">"45"</span> <span class="attr">height</span>=<span class="string">"45"</span> <span class="attr">class</span>=<span class="string">"path"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">path</span> <span class="attr">d</span>=<span class="string">"M 1 22 </span></span></span><br><span class="line"><span class="tag"><span class="string">			 L 21.5 2 Q 22.5 1 23.5 2</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 44 22</span></span></span><br><span class="line"><span class="tag"><span class="string">			  Z"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image.berlin4h.top/images/2021/07/20/20210720180058.png" alt=""></p>
+<h5 id="4、画icon"><a href="#4、画icon" class="headerlink" title="4、画icon"></a>4、画icon</h5><p>有了上面的基础，我们只需要把icon的每个坐标点都通过三次赛贝尔曲线描绘，就可以得到一个完整的小房子。</p>
+<p><img src="http://image.berlin4h.top/images/2021/07/20/20210720180537.png" alt=""></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">width</span>=<span class="string">"45"</span> <span class="attr">height</span>=<span class="string">"45"</span> <span class="attr">class</span>=<span class="string">"path"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">path</span> <span class="attr">d</span>=<span class="string">"M 25 3 Q 22.5 1 20 3 </span></span></span><br><span class="line"><span class="tag"><span class="string">             L 2 18 Q 1 22 5 22 </span></span></span><br><span class="line"><span class="tag"><span class="string">             L 7 20 </span></span></span><br><span class="line"><span class="tag"><span class="string">             L 7 35 Q 7 43 12 43 </span></span></span><br><span class="line"><span class="tag"><span class="string">             L 17 43 Q 19 43 19 41</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 19 31 Q 19 29 20 29</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 25 29 Q 26 29 26 31 </span></span></span><br><span class="line"><span class="tag"><span class="string">             L 26 41 Q 26 43 28 43 </span></span></span><br><span class="line"><span class="tag"><span class="string">             L 33 43 Q 38 43 38 35 </span></span></span><br><span class="line"><span class="tag"><span class="string">             L 38 20 </span></span></span><br><span class="line"><span class="tag"><span class="string">             L 40 22 Q 44 22 43 18 Z"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">stroke</span>=<span class="string">"#333"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">stroke-width</span>=<span class="string">"1.5"</span> </span></span><br><span class="line"><span class="tag">        <span class="attr">fill</span>=<span class="string">"none"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">path</span> <span class="attr">d</span>=<span class="string">"M 23.5 25 Q 22.5 25 21.5 25</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 19 25 Q 18 25 18 24</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 18 21</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 18 19 Q 18 18 19 18</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 20 18 Q 21 18 22 18</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 20 18 Q 21 18 22 18</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 23 18 Q 24 18 24 18</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 23 18 Q 24 18 24 18</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 26 18 Q 27 18 27 19</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 27 21</span></span></span><br><span class="line"><span class="tag"><span class="string">             L 27 24 Q 27 25 26 25 </span></span></span><br><span class="line"><span class="tag"><span class="string">             Z"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">fill</span>=<span class="string">"#0BCCB0"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">stroke</span>=<span class="string">"none"</span>&gt;</span><span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="5、添加动画"><a href="#5、添加动画" class="headerlink" title="5、添加动画"></a>5、添加动画</h5><p>动画的原理是改变SVG的路径，变成另一个图形，前提是这两个图形的坐标值数量必须一样。因此为了正方形能够转换变成房子，将正方形的坐标拆解成多个。利用css的animation动画，实现路径变化的动态效果。伪代码如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">html：</span><br><span class="line"><span class="tag">&lt;<span class="name">label</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"checkbox"</span> <span class="attr">id</span>=<span class="string">"home"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">svg</span> <span class="attr">width</span>=<span class="string">"45px"</span> <span class="attr">height</span>=<span class="string">"45px"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">defs</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">linearGradient</span> <span class="attr">id</span>=<span class="string">"grad1"</span> <span class="attr">x1</span>=<span class="string">"0%"</span> <span class="attr">y1</span>=<span class="string">"0%"</span> <span class="attr">x2</span>=<span class="string">"0"</span> <span class="attr">y2</span>=<span class="string">"100%"</span>&gt;</span></span><br><span class="line">			    <span class="tag">&lt;<span class="name">stop</span> <span class="attr">offset</span>=<span class="string">"0%"</span> <span class="attr">style</span>=<span class="string">"stop-color:#67F1DD;stop-opacity:1"</span> /&gt;</span></span><br><span class="line">			    <span class="tag">&lt;<span class="name">stop</span> <span class="attr">offset</span>=<span class="string">"100%"</span> <span class="attr">style</span>=<span class="string">"stop-color:#15CCB2;stop-opacity:1"</span> /&gt;</span></span><br><span class="line">		    <span class="tag">&lt;/<span class="name">linearGradient</span>&gt;</span></span><br><span class="line">		 <span class="tag">&lt;/<span class="name">defs</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">path</span> <span class="attr">class</span>=<span class="string">"background"</span>&gt;</span><span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">path</span> <span class="attr">class</span>=<span class="string">"border"</span>&gt;</span><span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-id">#home</span>&#123;</span><br><span class="line">				<span class="attribute">display</span>: none;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="selector-class">.background</span>&#123;</span><br><span class="line">				<span class="attribute">fill</span>: <span class="built_in">url</span>(#grad1);</span><br><span class="line">				<span class="attribute">animation</span>: toSmall .<span class="number">5s</span> linear forwards;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="selector-class">.border</span>&#123;</span><br><span class="line">				<span class="attribute">fill</span>: none;</span><br><span class="line">				<span class="attribute">stroke</span>: <span class="number">#333</span>;</span><br><span class="line">				<span class="attribute">stroke-width</span>: <span class="number">1.5</span>;</span><br><span class="line">				<span class="attribute">animation</span>: fade-in .<span class="number">5s</span> linear forwards;</span><br><span class="line">				<span class="attribute">opacity</span>: <span class="number">0</span>;</span><br><span class="line">				<span class="attribute">d</span>: <span class="built_in">path</span>(<span class="string">'M 25 3 Q 22.5 1 20 3 L 2 18 Q 1 22 5 22 L 7 20 L 7 35 Q 7 43 12 43 L 17 43 Q 19 43 19 41 L 19 31 Q 19 29 20 29 L 25 29 Q 26 29 26 31 L 26 41 Q 26 43 28 43 L 33 43 Q 38 43 38 35 L 38 20 L 40 22 Q 44 22 43 18 Z'</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="selector-id">#home</span><span class="selector-pseudo">:checked</span> + <span class="selector-tag">svg</span> <span class="selector-class">.background</span> &#123;</span><br><span class="line">				<span class="attribute">stroke-width</span>: <span class="number">1.5</span>;</span><br><span class="line">				<span class="attribute">stroke</span>: <span class="built_in">url</span>(#grad1);</span><br><span class="line">				<span class="attribute">animation</span>: bigger .<span class="number">5s</span>  linear forwards;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="selector-id">#home</span><span class="selector-pseudo">:checked</span> + <span class="selector-tag">svg</span> <span class="selector-class">.border</span> &#123;</span><br><span class="line">				<span class="attribute">opacity</span>: <span class="number">1</span>;</span><br><span class="line">				<span class="attribute">animation</span>: fade-out .<span class="number">3s</span> linear forwards;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">@keyframes</span> bigger &#123;</span><br><span class="line">				0% &#123;</span><br><span class="line">					<span class="attribute">d</span>: <span class="built_in">path</span>(<span class="string">'M 23.5 18 Q 22.5 18 21.5 18 L 19 18 Q 18 18 18 19 L 18 21 L 18 24 Q 18 25 19 25 L 20 25 Q 21 25 22 25 L 20 25 Q 21 25 22 25 L 23 25 Q 24 25 24 25 L 23 25 Q 24 25 24 25 L 26 25 Q 27 25 27 24 L 27 21 L 27 19 Q 27 18 26 18 Z'</span>);</span><br><span class="line">				&#125;</span><br><span class="line">				50% &#123;</span><br><span class="line">					<span class="attribute">d</span>: <span class="built_in">path</span>(<span class="string">'M 25 3 Q 22.5 1 20 3 L 2 18 Q 1 22 5 22 L 7 20 L 7 35 Q 7 43 12 43 L 17 43 Q 19 43 19 43 L 19 43 Q 19 43 20 43 L 25 43 Q 26 43 26 43 L 26 43 Q 26 43 28 43 L 33 43 Q 38 43 38 35 L 38 20 L 40 22 Q 44 22 43 18 Z'</span>);</span><br><span class="line">				&#125;</span><br><span class="line">				</span><br><span class="line">				100% &#123;</span><br><span class="line">					<span class="attribute">d</span>: <span class="built_in">path</span>(<span class="string">'M 25 3 Q 22.5 1 20 3 L 2 18 Q 1 22 5 22 L 7 20 L 7 35 Q 7 43 12 43 L 17 43 Q 19 43 19 41 L 19 31 Q 19 29 20 29 L 25 29 Q 26 29 26 31 L 26 41 Q 26 43 28 43 L 33 43 Q 38 43 38 35 L 38 20 L 40 22 Q 44 22 43 18 Z'</span>);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">@keyframes</span> toSmall&#123;</span><br><span class="line">				0%&#123;</span><br><span class="line">					<span class="attribute">d</span>: <span class="built_in">path</span>(<span class="string">'M 25 3 Q 22.5 1 20 3 L 2 18 Q 1 22 5 22 L 7 20 L 7 35 Q 7 43 12 43 L 17 43 Q 19 43 19 41 L 19 31 Q 19 29 20 29 L 25 29 Q 26 29 26 31 L 26 41 Q 26 43 28 43 L 33 43 Q 38 43 38 35 L 38 20 L 40 22 Q 44 22 43 18 Z'</span>);</span><br><span class="line">				&#125;</span><br><span class="line">				50%&#123;</span><br><span class="line">					<span class="attribute">d</span>: <span class="built_in">path</span>(<span class="string">'M 22.5 22.5 Q 22.5 22.5 22.5 22.5 L 22.5 22.5 Q 22.5 22.5 22.5 22.5 L 22.5 22.5 L 22.5 22.5 Q 22.5 22.5 22.5 22.5 L 22.5 22.5 Q 22.5 22.5 22.5 22.5 L 22.5 22.5 Q 22.5 22.5 22.5 22.5 L 22.5 22.5 Q 22.5 22.5 22.5 22.5 L 22.5 22.5 Q 22.5 22.5 22.5 22.5 L 22.5 22.5 Q 22.5 22.5 22.5 22.5 L 22.5 22.5 L 22.5 22.5 Q 22.5 22.5 22.5 22.5 Z'</span>);</span><br><span class="line">				&#125;</span><br><span class="line">				100%&#123;</span><br><span class="line">					<span class="attribute">d</span>: <span class="built_in">path</span>(<span class="string">'M 23.5 18 Q 22.5 18 21.5 18 L 19 18 Q 18 18 18 19 L 18 21 L 18 24 Q 18 25 19 25 L 20 25 Q 21 25 22 25 L 20 25 Q 21 25 22 25 L 23 25 Q 24 25 24 25 L 23 25 Q 24 25 24 25 L 26 25 Q 27 25 27 24 L 27 21 L 27 19 Q 27 18 26 18 Z'</span>);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">@keyframes</span> fade-in&#123;</span><br><span class="line">				<span class="selector-tag">from</span>&#123;<span class="attribute">opacity</span>: <span class="number">0</span>;&#125;</span><br><span class="line">				<span class="selector-tag">to</span>&#123; <span class="attribute">opacity</span>: <span class="number">1</span>;&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">@keyframes</span> fade-out&#123;</span><br><span class="line">				<span class="selector-tag">from</span>&#123;<span class="attribute">opacity</span>: <span class="number">1</span>;&#125;</span><br><span class="line">				<span class="selector-tag">to</span>&#123;<span class="attribute">opacity</span>: <span class="number">0</span>;&#125;</span><br><span class="line">			&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>SVG</category>
+      </categories>
+      <tags>
+        <tag>SVG</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>antd+react实现断点续传</title>
     <url>/2021/02/21/antd+react%E5%AE%9E%E7%8E%B0%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/</url>
     <content><![CDATA[<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>文件上传之后，获得文件的唯一标识（MD5值），将文件切割成多个分块，根据文件标识查询文件未上传的分块，所有分块上传完之后，将分块进行合并。</p>
@@ -25,33 +128,9 @@
         <category>react</category>
       </categories>
       <tags>
+        <tag>antd</tag>
         <tag>断点续传</tag>
         <tag>react</tag>
-        <tag>antd</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>react实现图片懒加载</title>
-    <url>/2021/04/06/react%E5%AE%9E%E7%8E%B0%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD/</url>
-    <content><![CDATA[<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>某些网站中拥有大量图片，但用户可视区范围内，只展示一小部分的图片，如果不对图片进行懒加载，在网速较慢或图片资源过大的情况下，会出现加载缓慢卡顿的现象，影响用户体验。针对这种情况提出先加载用户可视范围内的图片，其他图片等用户进行操作（滑动或点击按钮）时再进行加载。</p>
-<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><h5 id="1、图片列表"><a href="#1、图片列表" class="headerlink" title="1、图片列表"></a>1、图片列表</h5><p>先不对图片标签赋值图片的地址，将地址放到父级里面利用data-source保存。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;div id&#x3D;&quot;imgWrapper&quot;&gt;</span><br><span class="line">    &lt;ul id&#x3D;&quot;imgList&quot;&gt;</span><br><span class="line">        &#123;taskImg.map((item, index) &#x3D;&gt;(</span><br><span class="line">            &lt;li key&#x3D;&#123;&#96;img$&#123;index&#125;&#96;&#125;</span><br><span class="line">                lazyload&#x3D;&quot;true&quot;</span><br><span class="line">                data-original&#x3D;&#123;download() + item.imageId&#125;&gt;</span><br><span class="line">                &lt;Image</span><br><span class="line">                    width&#x3D;&#123;150&#125;</span><br><span class="line">                    height&#x3D;&#123;150&#125;</span><br><span class="line">                    src&#x3D;&quot;&quot;&#x2F;&gt;</span><br><span class="line">            &lt;&#x2F;li&gt;</span><br><span class="line">        ))&#125;</span><br><span class="line">    &lt;&#x2F;ul&gt;</span><br><span class="line">&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
-
-<h5 id="2、页面滑动"><a href="#2、页面滑动" class="headerlink" title="2、页面滑动"></a>2、页面滑动</h5><p>横向滚动</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 获取未显示的图片列表</span><br><span class="line">const imgList &#x3D; document.getElementById(&quot;imgList&quot;).querySelectorAll(&quot;li[data-original][lazyload]&quot;);</span><br><span class="line">&#x2F;&#x2F; 获取主容器左边距离和右边距离</span><br><span class="line">const wrapper &#x3D; document.getElementById(&quot;imgWrapper&quot;);</span><br><span class="line">const initRect &#x3D; wrapper.getBoundingClientRect();</span><br><span class="line">const initLeft &#x3D; initRect.left;</span><br><span class="line">const initRight &#x3D; initRect.right;</span><br><span class="line">imgList.forEach((item, index) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    const img &#x3D; item.firstChild.firstChild;&#x2F;&#x2F;获取图片元素</span><br><span class="line">    const rect &#x3D; item.getBoundingClientRect();</span><br><span class="line">    let rectL &#x3D; rect.left + rect.width;&#x2F;&#x2F; 图片到可视区域左边距离</span><br><span class="line">    let rectR &#x3D; rect.right - rect.width;&#x2F;&#x2F; 图片到可视区域右边距离</span><br><span class="line">    &#x2F;&#x2F; 判断是否在可视区域内</span><br><span class="line">    if ((rect.left &gt;&#x3D; initLeft &amp;&amp; rectR &lt;&#x3D; initRight) || (rectL &gt;&#x3D; initLeft &amp;&amp; rect.right &lt;&#x3D; initRight))</span><br><span class="line">    &#123;</span><br><span class="line">        img.src &#x3D; item.dataset.original;</span><br><span class="line">        item.removeAttribute(&quot;data-original&quot;);&#x2F;&#x2F; 移除属性，下次不再遍历</span><br><span class="line">        item.removeAttribute(&quot;lazyload&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>竖向滚动</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 获取未显示的图片列表</span><br><span class="line">const imgList &#x3D; document.getElementById(&quot;imgList&quot;).querySelectorAll(&quot;li[data-original][lazyload]&quot;);</span><br><span class="line">imgList.forEach((item, index) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    const img &#x3D; item.firstChild.firstChild;&#x2F;&#x2F;获取图片元素</span><br><span class="line">    &#x2F;&#x2F; 判断是否在可视区域内</span><br><span class="line">    if (img.offsetTop &lt; window.innerHeight + window.pageYOffset)</span><br><span class="line">    &#123;</span><br><span class="line">        img.src &#x3D; item.dataset.original;</span><br><span class="line">        item.removeAttribute(&quot;data-original&quot;);&#x2F;&#x2F; 移除属性，下次不再遍历</span><br><span class="line">        item.removeAttribute(&quot;lazyload&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-
-
-]]></content>
-      <categories>
-        <category>react</category>
-      </categories>
-      <tags>
-        <tag>antd</tag>
-        <tag>懒加载</tag>
       </tags>
   </entry>
   <entry>
@@ -119,8 +198,8 @@
         <category>react</category>
       </categories>
       <tags>
-        <tag>react</tag>
         <tag>antd</tag>
+        <tag>react</tag>
         <tag>ailabel</tag>
       </tags>
   </entry>
