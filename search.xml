@@ -110,6 +110,45 @@
       </tags>
   </entry>
   <entry>
+    <title>关于drag拖拽事件的那些事</title>
+    <url>/2021/08/12/%E5%85%B3%E4%BA%8Edrag%E6%8B%96%E6%8B%BD%E4%BA%8B%E4%BB%B6%E9%82%A3%E4%BA%9B%E4%BA%8B/</url>
+    <content><![CDATA[<h3 id="基础用法"><a href="#基础用法" class="headerlink" title="基础用法"></a>基础用法</h3><h5 id="1、官网代码"><a href="#1、官网代码" class="headerlink" title="1、官网代码"></a>1、官网代码</h5><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 接受被移动元素 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"div1"</span> <span class="attr">ondrop</span>=<span class="string">"drop(event)"</span> <span class="attr">ondragover</span>=<span class="string">"allowDrop(event)"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 被移动元素 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">loading</span>=<span class="string">"lazy"</span> <span class="attr">id</span>=<span class="string">"drag1"</span> <span class="attr">src</span>=<span class="string">"/images/logo.png"</span> <span class="attr">draggable</span>=<span class="string">"true"</span> <span class="attr">ondragstart</span>=<span class="string">"drag(event)"</span> <span class="attr">width</span>=<span class="string">"336"</span> <span class="attr">height</span>=<span class="string">"69"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 拖动元素放置的容器 </span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">allowDrop</span>(<span class="params">ev</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ev.preventDefault();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">drag</span>(<span class="params">ev</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ev.dataTransfer.setData(<span class="string">"Text"</span>,ev.target.id);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">drop</span>(<span class="params">ev</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ev.preventDefault();</span><br><span class="line">    <span class="keyword">var</span> data=ev.dataTransfer.getData(<span class="string">"Text"</span>);</span><br><span class="line">    ev.target.appendChild(<span class="built_in">document</span>.getElementById(data));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码解释：</p>
+<ul>
+<li>调用 preventDefault() 来避免浏览器对数据的默认处理（drop 事件的默认行为是以链接形式打开）</li>
+<li>通过 dataTransfer.getData(“Text”) 方法获得被拖的数据。该方法将返回在 setData() 方法中设置为相同类型的任何数据。</li>
+<li>被拖数据是被拖元素的 id (“drag1”)</li>
+<li>把被拖元素追加到放置元素（目标元素）中</li>
+</ul>
+<h3 id="鼠标默认显示"><a href="#鼠标默认显示" class="headerlink" title="鼠标默认显示"></a>鼠标默认显示</h3><h5 id="1、效果描述"><a href="#1、效果描述" class="headerlink" title="1、效果描述"></a>1、效果描述</h5><p>一个课表，每个格子都是一个课程。拖到空白元素的可新增，而有课程的地方需要显示禁选。理想效果如下图：</p>
+<p><img src="http://image.berlin4h.top/images/2021/08/12/_2021_08_12_14_49_35_105.gif" alt=""></p>
+<h5 id="2、代码："><a href="#2、代码：" class="headerlink" title="2、代码："></a>2、代码：</h5><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">allowDrop(e, week, index, id)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 如果格子有元素 才阻断默认行为（其实默认行为就是鼠标icon为禁选，取消就是可以新增）</span></span><br><span class="line">    <span class="keyword">if</span> (!week)</span><br><span class="line">    &#123;</span><br><span class="line">        e.preventDefault();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="拖动中样式设置"><a href="#拖动中样式设置" class="headerlink" title="拖动中样式设置"></a>拖动中样式设置</h3><h5 id="1、效果描述-1"><a href="#1、效果描述-1" class="headerlink" title="1、效果描述"></a>1、效果描述</h5><p>拖动过程中，我希望我能知道我现在悬停在哪个元素上。实现效果如下：</p>
+<p><img src="http://image.berlin4h.top/images/2021/08/12/_2021_08_12_15_00_39_384.gif" alt=""></p>
+<h5 id="2、实现思路"><a href="#2、实现思路" class="headerlink" title="2、实现思路"></a>2、实现思路</h5><p>dragover事件监听的其实是被拖到的位置，于是可以在dragover事件中获取当前元素，给它一个标记。</p>
+<p>由于我的代码是用vue循环得出，于是我给了一个下标值标记。</p>
+<p>伪代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;!-- dragHoverIndex 代表当前悬浮的元素  drag-hover-cell 为悬浮元素的样式 --&gt;</span><br><span class="line">&lt;td v-for&#x3D;&quot;(week, wi) in d.arrangeList&quot;</span><br><span class="line">:key&#x3D;&quot;&#39;daily_week_&#39;+wi&quot;</span><br><span class="line">:class&#x3D;&quot;&#123;&#39;drag-hover-cell&#39;: dragHoverIndex &#x3D;&#x3D;&#x3D; (wi + &#39;_&#39; + d.id)&#125;&quot;&quot;</span><br><span class="line">class&#x3D;&quot;course-cell has-class&quot;</span><br><span class="line">@drop&#x3D;&quot;drop($event, d, wi)&quot;</span><br><span class="line">@dragover&#x3D;&quot;allowDrop($event, week, wi, d.id)&quot;</span><br><span class="line">                            &gt;</span><br><span class="line">                                ...</span><br><span class="line">                            &lt;&#x2F;td&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.drag-hover-cell</span>&#123;<span class="attribute">border</span>: <span class="number">1px</span> solid <span class="number">#409EFF</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">allowDrop(e, week, index, id)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// week 有值 则有课程  无值则显示悬浮样式</span></span><br><span class="line">	<span class="keyword">if</span> (!week)</span><br><span class="line">    &#123;</span><br><span class="line">    	e.preventDefault();</span><br><span class="line">    	<span class="keyword">this</span>.dragHoverIndex = index + <span class="string">"_"</span> + id;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">    	<span class="keyword">this</span>.dragHoverIndex = <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>drag</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+        <tag>drag</tag>
+        <tag>css</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>react实现图片懒加载</title>
     <url>/2021/04/06/react%E5%AE%9E%E7%8E%B0%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD/</url>
     <content><![CDATA[<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>某些网站中拥有大量图片，但用户可视区范围内，只展示一小部分的图片，如果不对图片进行懒加载，在网速较慢或图片资源过大的情况下，会出现加载缓慢卡顿的现象，影响用户体验。针对这种情况提出先加载用户可视范围内的图片，其他图片等用户进行操作（滑动或点击按钮）时再进行加载。</p>
@@ -274,8 +313,8 @@
         <category>CSS</category>
       </categories>
       <tags>
-        <tag>canvas</tag>
         <tag>css</tag>
+        <tag>canvas</tag>
       </tags>
   </entry>
 </search>
