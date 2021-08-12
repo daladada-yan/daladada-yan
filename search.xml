@@ -101,12 +101,36 @@
 
 ]]></content>
       <categories>
-        <category>react</category>
+        <category>React</category>
       </categories>
       <tags>
         <tag>断点续传</tag>
         <tag>react</tag>
         <tag>antd</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>react实现图片懒加载</title>
+    <url>/2021/04/06/react%E5%AE%9E%E7%8E%B0%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD/</url>
+    <content><![CDATA[<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>某些网站中拥有大量图片，但用户可视区范围内，只展示一小部分的图片，如果不对图片进行懒加载，在网速较慢或图片资源过大的情况下，会出现加载缓慢卡顿的现象，影响用户体验。针对这种情况提出先加载用户可视范围内的图片，其他图片等用户进行操作（滑动或点击按钮）时再进行加载。</p>
+<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><h5 id="1、图片列表"><a href="#1、图片列表" class="headerlink" title="1、图片列表"></a>1、图片列表</h5><p>先不对图片标签赋值图片的地址，将地址放到父级里面利用data-source保存。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;div id&#x3D;&quot;imgWrapper&quot;&gt;</span><br><span class="line">    &lt;ul id&#x3D;&quot;imgList&quot;&gt;</span><br><span class="line">        &#123;taskImg.map((item, index) &#x3D;&gt;(</span><br><span class="line">            &lt;li key&#x3D;&#123;&#96;img$&#123;index&#125;&#96;&#125;</span><br><span class="line">                lazyload&#x3D;&quot;true&quot;</span><br><span class="line">                data-original&#x3D;&#123;download() + item.imageId&#125;&gt;</span><br><span class="line">                &lt;Image</span><br><span class="line">                    width&#x3D;&#123;150&#125;</span><br><span class="line">                    height&#x3D;&#123;150&#125;</span><br><span class="line">                    src&#x3D;&quot;&quot;&#x2F;&gt;</span><br><span class="line">            &lt;&#x2F;li&gt;</span><br><span class="line">        ))&#125;</span><br><span class="line">    &lt;&#x2F;ul&gt;</span><br><span class="line">&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2、页面滑动"><a href="#2、页面滑动" class="headerlink" title="2、页面滑动"></a>2、页面滑动</h5><p>横向滚动</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 获取未显示的图片列表</span><br><span class="line">const imgList &#x3D; document.getElementById(&quot;imgList&quot;).querySelectorAll(&quot;li[data-original][lazyload]&quot;);</span><br><span class="line">&#x2F;&#x2F; 获取主容器左边距离和右边距离</span><br><span class="line">const wrapper &#x3D; document.getElementById(&quot;imgWrapper&quot;);</span><br><span class="line">const initRect &#x3D; wrapper.getBoundingClientRect();</span><br><span class="line">const initLeft &#x3D; initRect.left;</span><br><span class="line">const initRight &#x3D; initRect.right;</span><br><span class="line">imgList.forEach((item, index) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    const img &#x3D; item.firstChild.firstChild;&#x2F;&#x2F;获取图片元素</span><br><span class="line">    const rect &#x3D; item.getBoundingClientRect();</span><br><span class="line">    let rectL &#x3D; rect.left + rect.width;&#x2F;&#x2F; 图片到可视区域左边距离</span><br><span class="line">    let rectR &#x3D; rect.right - rect.width;&#x2F;&#x2F; 图片到可视区域右边距离</span><br><span class="line">    &#x2F;&#x2F; 判断是否在可视区域内</span><br><span class="line">    if ((rect.left &gt;&#x3D; initLeft &amp;&amp; rectR &lt;&#x3D; initRight) || (rectL &gt;&#x3D; initLeft &amp;&amp; rect.right &lt;&#x3D; initRight))</span><br><span class="line">    &#123;</span><br><span class="line">        img.src &#x3D; item.dataset.original;</span><br><span class="line">        item.removeAttribute(&quot;data-original&quot;);&#x2F;&#x2F; 移除属性，下次不再遍历</span><br><span class="line">        item.removeAttribute(&quot;lazyload&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>竖向滚动</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 获取未显示的图片列表</span><br><span class="line">const imgList &#x3D; document.getElementById(&quot;imgList&quot;).querySelectorAll(&quot;li[data-original][lazyload]&quot;);</span><br><span class="line">imgList.forEach((item, index) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    const img &#x3D; item.firstChild.firstChild;&#x2F;&#x2F;获取图片元素</span><br><span class="line">    &#x2F;&#x2F; 判断是否在可视区域内</span><br><span class="line">    if (img.offsetTop &lt; window.innerHeight + window.pageYOffset)</span><br><span class="line">    &#123;</span><br><span class="line">        img.src &#x3D; item.dataset.original;</span><br><span class="line">        item.removeAttribute(&quot;data-original&quot;);&#x2F;&#x2F; 移除属性，下次不再遍历</span><br><span class="line">        item.removeAttribute(&quot;lazyload&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+]]></content>
+      <categories>
+        <category>React</category>
+      </categories>
+      <tags>
+        <tag>antd</tag>
+        <tag>懒加载</tag>
       </tags>
   </entry>
   <entry>
@@ -140,36 +164,12 @@
 
 ]]></content>
       <categories>
-        <category>drag</category>
+        <category>CSS</category>
       </categories>
       <tags>
         <tag>vue</tag>
         <tag>drag</tag>
         <tag>css</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>react实现图片懒加载</title>
-    <url>/2021/04/06/react%E5%AE%9E%E7%8E%B0%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD/</url>
-    <content><![CDATA[<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>某些网站中拥有大量图片，但用户可视区范围内，只展示一小部分的图片，如果不对图片进行懒加载，在网速较慢或图片资源过大的情况下，会出现加载缓慢卡顿的现象，影响用户体验。针对这种情况提出先加载用户可视范围内的图片，其他图片等用户进行操作（滑动或点击按钮）时再进行加载。</p>
-<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><h5 id="1、图片列表"><a href="#1、图片列表" class="headerlink" title="1、图片列表"></a>1、图片列表</h5><p>先不对图片标签赋值图片的地址，将地址放到父级里面利用data-source保存。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;div id&#x3D;&quot;imgWrapper&quot;&gt;</span><br><span class="line">    &lt;ul id&#x3D;&quot;imgList&quot;&gt;</span><br><span class="line">        &#123;taskImg.map((item, index) &#x3D;&gt;(</span><br><span class="line">            &lt;li key&#x3D;&#123;&#96;img$&#123;index&#125;&#96;&#125;</span><br><span class="line">                lazyload&#x3D;&quot;true&quot;</span><br><span class="line">                data-original&#x3D;&#123;download() + item.imageId&#125;&gt;</span><br><span class="line">                &lt;Image</span><br><span class="line">                    width&#x3D;&#123;150&#125;</span><br><span class="line">                    height&#x3D;&#123;150&#125;</span><br><span class="line">                    src&#x3D;&quot;&quot;&#x2F;&gt;</span><br><span class="line">            &lt;&#x2F;li&gt;</span><br><span class="line">        ))&#125;</span><br><span class="line">    &lt;&#x2F;ul&gt;</span><br><span class="line">&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
-
-<h5 id="2、页面滑动"><a href="#2、页面滑动" class="headerlink" title="2、页面滑动"></a>2、页面滑动</h5><p>横向滚动</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 获取未显示的图片列表</span><br><span class="line">const imgList &#x3D; document.getElementById(&quot;imgList&quot;).querySelectorAll(&quot;li[data-original][lazyload]&quot;);</span><br><span class="line">&#x2F;&#x2F; 获取主容器左边距离和右边距离</span><br><span class="line">const wrapper &#x3D; document.getElementById(&quot;imgWrapper&quot;);</span><br><span class="line">const initRect &#x3D; wrapper.getBoundingClientRect();</span><br><span class="line">const initLeft &#x3D; initRect.left;</span><br><span class="line">const initRight &#x3D; initRect.right;</span><br><span class="line">imgList.forEach((item, index) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    const img &#x3D; item.firstChild.firstChild;&#x2F;&#x2F;获取图片元素</span><br><span class="line">    const rect &#x3D; item.getBoundingClientRect();</span><br><span class="line">    let rectL &#x3D; rect.left + rect.width;&#x2F;&#x2F; 图片到可视区域左边距离</span><br><span class="line">    let rectR &#x3D; rect.right - rect.width;&#x2F;&#x2F; 图片到可视区域右边距离</span><br><span class="line">    &#x2F;&#x2F; 判断是否在可视区域内</span><br><span class="line">    if ((rect.left &gt;&#x3D; initLeft &amp;&amp; rectR &lt;&#x3D; initRight) || (rectL &gt;&#x3D; initLeft &amp;&amp; rect.right &lt;&#x3D; initRight))</span><br><span class="line">    &#123;</span><br><span class="line">        img.src &#x3D; item.dataset.original;</span><br><span class="line">        item.removeAttribute(&quot;data-original&quot;);&#x2F;&#x2F; 移除属性，下次不再遍历</span><br><span class="line">        item.removeAttribute(&quot;lazyload&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>竖向滚动</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 获取未显示的图片列表</span><br><span class="line">const imgList &#x3D; document.getElementById(&quot;imgList&quot;).querySelectorAll(&quot;li[data-original][lazyload]&quot;);</span><br><span class="line">imgList.forEach((item, index) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    const img &#x3D; item.firstChild.firstChild;&#x2F;&#x2F;获取图片元素</span><br><span class="line">    &#x2F;&#x2F; 判断是否在可视区域内</span><br><span class="line">    if (img.offsetTop &lt; window.innerHeight + window.pageYOffset)</span><br><span class="line">    &#123;</span><br><span class="line">        img.src &#x3D; item.dataset.original;</span><br><span class="line">        item.removeAttribute(&quot;data-original&quot;);&#x2F;&#x2F; 移除属性，下次不再遍历</span><br><span class="line">        item.removeAttribute(&quot;lazyload&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-
-
-]]></content>
-      <categories>
-        <category>react</category>
-      </categories>
-      <tags>
-        <tag>antd</tag>
-        <tag>懒加载</tag>
       </tags>
   </entry>
   <entry>
@@ -234,7 +234,7 @@
 
 ]]></content>
       <categories>
-        <category>react</category>
+        <category>React</category>
       </categories>
       <tags>
         <tag>react</tag>
@@ -273,8 +273,7 @@
 <h5 id="6、结语"><a href="#6、结语" class="headerlink" title="6、结语"></a>6、结语</h5><p>官方给的随机颜色是在0-160区间，红黄蓝都在这个区间显示的字体颜色是深色的，比较适合浅色背景，如果和我一样是深色背景的可以将rgba的色值调高一点，一般160-255之间的出来颜色会偏浅。</p>
 ]]></content>
       <categories>
-        <category>vue</category>
-        <category>echarts</category>
+        <category>Vue</category>
       </categories>
       <tags>
         <tag>vue</tag>
